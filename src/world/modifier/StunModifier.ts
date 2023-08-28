@@ -5,6 +5,6 @@ import { NegativeModifier } from './NegativeModifier.ts'
  */
 export class StunModifier extends NegativeModifier {
     public constructor() {
-        super({ name: 'Stun' })
+        super({ name: 'Stun', description: '' })
     }
 }

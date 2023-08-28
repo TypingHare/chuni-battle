@@ -5,6 +5,9 @@ import { BuiltinRegistry } from './registry/BuiltinRegistry.ts'
 import { ResourceKey } from './resource/ResourceKey.ts'
 import { Modifier } from '../world/modifier/Modifier.ts'
 
+/**
+ * A utility class collecting all builtin registries.
+ */
 export class Registries {
     /**
      * The path of root resource location.

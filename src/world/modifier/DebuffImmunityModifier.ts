@@ -6,6 +6,9 @@ import { PositiveModifier } from './PositiveModifier.ts'
  */
 export class DebuffImmunityModifier extends PositiveModifier {
     public constructor() {
-        super({ name: 'Spell Immunity' })
+        super({
+            name: 'Spell Immunity',
+            description: '',
+        })
     }
 }

@@ -1,14 +1,15 @@
 {
   "name": "chuni-battle",
   "version": "1.0.0",
-  "description": "## Development [TypeScript Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)",
+  "description": "Chuni Battle",
   "main": "index.js",
   "directories": {
     "doc": "doc"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  "scripts": {},
+  "author": "James Chan",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.5.7"
+  }
 }

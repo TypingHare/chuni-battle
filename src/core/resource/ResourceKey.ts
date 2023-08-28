@@ -37,6 +37,6 @@ export class ResourceKey {
      * Returns the resource key string.
      */
     public toString(): string {
-        return `${location}@${parent}`
+        return `${this.location}@${this.parent}`
     }
 }
