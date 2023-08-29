@@ -1,26 +1,28 @@
+import { ResourceKey } from './resource/ResourceKey.ts'
+import { Registry } from './registry/Registry.ts'
+import { Builtins } from './Builtins.ts'
+import { ResourceLocation } from './resource/ResourceLocation.ts'
+
 /**
  * A utility class containing helper functions relating to resources.
  */
 export class Resources {
-    // /**
-    //  * Finds a resource by its key.
-    //  * @param resourceKey The key of the resource to search
-    //  */
-    // public static find<T>(resourceKey: ResourceKey): T {
-    //     const registry = Registries.ROOT.getByLocation(resourceKey.getParent()) as Registry<T>
-    //
-    //     return registry.getByLocation(resourceKey.getLocation()) as T
-    // }
-    //
-    // /**
-    //  * Creates a resource key.
-    //  * @param registry The registry of the resource
-    //  * @param path The path of the resource
-    //  */
-    // public static key(registry: Registry, path: string): ResourceKey {
-    //     const registryLocation = registry.getResourceKey().getLocation()
-    //     const location = Builtins.RESOURCE_LOCATION_BUILDER.create(path)
-    //
-    //     return new ResourceKey(registryLocation, location)
-    // }
+    /**
+     * Creates a resource location
+     * @param path The path of the location
+     */
+    public static location(path: string): ResourceLocation {
+        return Builtins.RESOURCE_LOCATION_BUILDER.create(path)
+    }
+
+    /**
+     * Creates a resource key.
+     * @param registry The registry of the resource
+     * @param path The path of the resource
+     */
+    public static key(registry: Registry, path: string): ResourceKey {
+        const location = Builtins.RESOURCE_LOCATION_BUILDER.create(path)
+
+        return new ResourceKey(registry.getKey().getLocation(), location)
+    }
 }

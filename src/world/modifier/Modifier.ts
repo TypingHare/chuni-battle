@@ -1,4 +1,4 @@
-import { PropertyDriven } from '../PropertyDriven.ts'
+import { Model } from '../util/Model.ts'
 
 export interface ModifierProperties {
     // The name of the status
@@ -11,5 +11,5 @@ export interface ModifierProperties {
     readonly isNegative: boolean
 }
 
-export abstract class Modifier extends PropertyDriven<ModifierProperties> {
+export abstract class Modifier extends Model<ModifierProperties> {
 }

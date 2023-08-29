@@ -1,7 +1,7 @@
 /**
  * Property-driven abstract class.
  */
-export abstract class PropertyDriven<P extends object> {
+export abstract class Model<P extends object> {
     /**
      * Creates the class by properties.
      * @param properties The properties

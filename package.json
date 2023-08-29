@@ -6,10 +6,14 @@
   "directories": {
     "doc": "doc"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
   "author": "James Chan",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.5.7"
+    "@types/jest": "^29.5.4",
+    "@types/node": "^20.5.7",
+    "ts-jest": "^29.1.1"
   }
 }
