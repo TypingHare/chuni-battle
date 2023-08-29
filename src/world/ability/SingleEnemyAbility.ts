@@ -4,10 +4,10 @@ import { Ability, AbilityProperties, TargetRangeType, TargetType } from './Abili
  * An ability that targets one enemy.
  */
 export class SingleEnemyAbility extends Ability {
-    public constructor(properties: Omit<AbilityProperties, 'targetTypeList' | 'targetRange'>) {
+    public constructor(properties: Omit<AbilityProperties, 'targetType' | 'targetRange'>) {
         super({
             ...properties,
-            targetTypeList: [TargetType.Enemy],
+            targetType: TargetType.Enemy,
             targetRange: TargetRangeType.Single,
         })
     }

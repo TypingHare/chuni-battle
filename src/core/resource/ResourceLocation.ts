@@ -14,9 +14,17 @@ export class ResourceLocation {
      */
     public constructor(
         private readonly namespace: string,
-        private readonly path: string
+        private readonly path: string,
     ) {
+        // Check namespace
+        if (namespace.match(/^[A-Za-z0-9-]+$/) === null) {
+            throw new Error(`Illegal namespace: [ ${namespace} ].`)
+        }
 
+        // Check path
+        if (namespace.match(/^[A-Za-z0-9/._-]+$/) === null) {
+            throw new Error(`Illegal path: [ ${namespace} ].`)
+        }
     }
 
     /**

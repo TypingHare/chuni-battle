@@ -77,7 +77,7 @@ export class BuiltinRegistry<T = any> extends Registry<T> {
             throw new ResourceKeyConflictException(resourceKey)
         }
 
-        const reference = new Reference(resourceKey, resource)
+        const reference = new Reference(resourceKey, resource, this.byId.length)
         this.keyMap.set(resourceLocation.toString(), resourceKey)
         this.byId.push(reference)
         this.byLocation.set(resourceLocation, reference)

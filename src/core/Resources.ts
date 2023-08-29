@@ -8,7 +8,7 @@ import { ResourceLocation } from './resource/ResourceLocation.ts'
  */
 export class Resources {
     /**
-     * Creates a resource location
+     * Creates a resource location with the builtin resource location builder.
      * @param path The path of the location
      */
     public static location(path: string): ResourceLocation {
@@ -16,7 +16,7 @@ export class Resources {
     }
 
     /**
-     * Creates a resource key.
+     * Creates a resource key with the builtin resource location builder.
      * @param registry The registry of the resource
      * @param path The path of the resource
      */

@@ -32,8 +32,8 @@ export interface AbilityProperties {
     // The name of the ability
     readonly name: string
 
-    // The list of target types
-    readonly targetTypeList: TargetType[]
+    // Target type
+    readonly targetType: TargetType
 
     // Target range
     readonly targetRange: TargetRangeType
@@ -86,7 +86,7 @@ export class EmptyAbility extends Ability {
     public constructor() {
         super({
             name: EmptyAbility.NAME,
-            targetTypeList: [TargetType.None],
+            targetType: TargetType.None,
             targetRange: TargetRangeType.All,
             isSpell: true,
             effectList: [],

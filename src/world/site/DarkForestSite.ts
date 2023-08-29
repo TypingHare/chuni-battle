@@ -1,7 +1,7 @@
 import { Site } from './Site.ts'
 import { Units } from '../Units.ts'
 import { LevelRange } from '../util/LevelRange.ts'
-import { Mob } from '../content/Mob.ts'
+import { MobType } from '../content/MobType.ts'
 
 export class DarkForestSite extends Site {
     public constructor() {
@@ -10,7 +10,7 @@ export class DarkForestSite extends Site {
             mobModeList: [
                 {
                     unit: Units.SPIDER_WARRIOR,
-                    mob: Mob.Standard,
+                    mob: MobType.Standard,
                     levelRange: new LevelRange(3, 5),
                     appearRate: 20,
                 },

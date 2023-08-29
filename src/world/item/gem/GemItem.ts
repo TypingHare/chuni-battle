@@ -1,12 +1,12 @@
-import { Item, ItemProperties } from '../Item.ts'
+import { Item, ItemProperties, ItemType } from '../Item.ts'
 
-export type GemItemProperties = Omit<ItemProperties, 'maxStack'>
+export type GemItemProperties = Omit<ItemProperties, 'type' | 'maxStack'>
 
 /**
  * Gem item.
  */
 export class GemItem extends Item {
     public constructor(properties: GemItemProperties) {
-        super({ ...properties, maxStack: 64 })
+        super({ ...properties, type: ItemType.Gem, maxStack: 64 })
     }
 }

@@ -1,4 +1,3 @@
-import { ResourceLocation } from './resource/ResourceLocation.ts'
 import { Builtins } from './Builtins.ts'
 import { Registry } from './registry/Registry.ts'
 import { BuiltinRegistry } from './registry/BuiltinRegistry.ts'
@@ -14,20 +13,9 @@ import { Unit } from '../world/unit/Unit.ts'
  * A utility class collecting all builtin registries.
  */
 export class Registries {
-    /**
-     * The path of root resource location.
-     */
-    public static readonly ROOT_LOCATION_PATH: string = 'root'
-
-    /**
-     * Root location.
-     */
-    public static readonly ROOT_LOCATION: ResourceLocation
-        = Builtins.RESOURCE_LOCATION_BUILDER.create(Registries.ROOT_LOCATION_PATH)
-
     // Root registry
     public static readonly ROOT: Registry<Registry>
-        = new BuiltinRegistry<Registry>(Registries.createRegistryKey(Registries.ROOT_LOCATION_PATH))
+        = new BuiltinRegistry<Registry>(Registries.createRegistryKey(Builtins.ROOT_LOCATION_PATH))
 
     // Regular registries
     public static readonly ABILITY: Registry<Ability> = Registries.createRegistry('ability')
@@ -43,7 +31,7 @@ export class Registries {
      * @private
      */
     private static createRegistryKey(path: string): ResourceKey {
-        return new ResourceKey(Registries.ROOT_LOCATION, Builtins.RESOURCE_LOCATION_BUILDER.create(path))
+        return new ResourceKey(Builtins.ROOT_LOCATION, Builtins.RESOURCE_LOCATION_BUILDER.create(path))
     }
 
     /**

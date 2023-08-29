@@ -1,7 +1,7 @@
 /**
  * Types of mobs.
  */
-export enum Mob {
+export enum MobType {
     Standard,       // Nothing special
     Elite,          // A mob group has at most one elite mob
     MiniBoss,       // A mini boss will appear with at most two standard mobs

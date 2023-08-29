@@ -1,7 +1,7 @@
 import { InstantiableModel } from '../util/InstantiableModel.ts'
 import { ModelInstance } from '../util/ModelInstance.ts'
 import { Unit, UnitInstance } from '../unit/Unit.ts'
-import { Mob } from '../content/Mob.ts'
+import { MobType } from '../content/MobType.ts'
 import { LevelRange } from '../util/LevelRange.ts'
 
 export interface MobMode {
@@ -9,7 +9,7 @@ export interface MobMode {
     readonly unit: Unit,
 
     // The type of this mob
-    readonly mob: Mob,
+    readonly mob: MobType,
 
     // The level range
     readonly levelRange: LevelRange

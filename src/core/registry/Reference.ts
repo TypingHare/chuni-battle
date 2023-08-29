@@ -22,10 +22,12 @@ export class Reference<T = any> {
      * Creates a reference.
      * @param resourceKey The key of the resource
      * @param resource The resource this reference contains
+     * @param id
      */
     public constructor(
-        private resourceKey: ResourceKey,
-        private resource: T,
+        private readonly resourceKey: ResourceKey,
+        private readonly resource: T,
+        private readonly id: number,
     ) {
     }
 
@@ -74,7 +76,14 @@ export class Reference<T = any> {
      * Removes a tag.
      * @param tag The tag to remove
      */
-    public removeTag(tag: Tag) {
+    public removeTag(tag: Tag): void {
         this.tagSet.delete(tag)
+    }
+
+    /**
+     * Returns the id of this reference.
+     */
+    public getId(): number {
+        return this.id
     }
 }

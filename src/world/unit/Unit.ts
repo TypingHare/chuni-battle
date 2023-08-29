@@ -9,7 +9,7 @@ import { ModifierAffected } from '../effect/ModifierEffect.ts'
 import { EffectInstance } from '../effect/Effect.ts'
 import { Modifier } from '../modifier/Modifier.ts'
 import { HiddenAttribute, Stat, StatsUtil, VisibleAttribute } from '../content/Stat.ts'
-import { GameConstants } from '../content/GameConstants.ts'
+import { GameConstants } from '../GameConstants.ts'
 
 export type AbilityMode = AbilitySpawningOptions & {
     readonly ability: Ability
@@ -51,8 +51,14 @@ export class Unit extends InstantiableModel<UnitProperties, UnitSpawningOptions>
 }
 
 export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> implements StatEffectAffected,
-    HealthPointEffectAffected, ManaPointEffectAffected,
-    ModifierAffected, AbilityHolder {
+    HealthPointEffectAffected,
+    ManaPointEffectAffected,
+    ModifierAffected,
+    AbilityHolder {
+    /**
+     * The level of the unit instance.
+     * @private
+     */
     private level: number
 
     /**
@@ -77,13 +83,13 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
      * The unit's current health point.
      * @private
      */
-    private currentHealthPoint: number = 0
+    private currentHealthPoint: number
 
     /**
      * The unit's current mana point.
      * @private
      */
-    private currentManaPoint: number = 0
+    private currentManaPoint: number
 
     /**
      * The list of ability instances.
@@ -125,9 +131,9 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
 
         // Initialize ability instances
         this.abilityInstanceList = []
-        // for (let i = 0; i < Unit.MAX_ABILITY_NUMBER; i++) {
-        //     this.abilityInstanceList.push(AbilityInstance.NULL)
-        // }
+        for (let i = 0; i < GameConstants.UNIT_MAX_ABILITY_NUMBER; i++) {
+            this.abilityInstanceList.push(AbilityInstance.NULL)
+        }
     }
 
     /**
@@ -149,6 +155,30 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
      */
     public getCurrentManaPoint(): number {
         return this.currentManaPoint
+    }
+
+    /**
+     * Make this unit instance level up.
+     */
+    public levelUp(): void {
+        if (this.level === GameConstants.UNIT_MAX_LEVEL) {
+            return
+        }
+
+        this.level++
+
+        // The unit instance gains stats
+        for (let stat = Stat.HealthPoint; stat < Stat.CounterSpell; stat++) {
+            this.baseStats[stat] += this.model.getStatGain(stat)
+        }
+    }
+
+    /**
+     * Attacks a specified target.
+     * @param target The target to attack
+     */
+    public attack(target: UnitInstance): void {
+        target.increaseHealthPoint(-10)
     }
 
     /**
@@ -254,22 +284,6 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
     public swapAbility(index1: number, index2: number): void {
         const list = this.abilityInstanceList;
         [list[index1], list[index2]] = [list[index2], list[index1]]
-    }
-
-    /**
-     * Make this unit instance level up.
-     */
-    public levelUp(): void {
-        if (this.level === GameConstants.UNIT_MAX_LEVEL) {
-            return
-        }
-
-        this.level++
-
-        // The unit instance gains stats
-        for (let stat = Stat.HealthPoint; stat < Stat.CounterSpell; stat++) {
-            this.baseStats[stat] += this.model.getStatGain(stat)
-        }
     }
 
     public getModifiers(): Iterable<Modifier> {
