@@ -1,10 +1,10 @@
-import { SpellImmunityModifier } from './modifier/SpellImmunityModifier.ts'
-import { AttackImmunityModifier } from './modifier/AttackImmunityModifier.ts'
-import { DebuffImmunityModifier } from './modifier/DebuffImmunityModifier.ts'
-import { StunModifier } from './modifier/StunModifier.ts'
-import { Modifier } from './modifier/Modifier.ts'
-import { Builtins } from '../core/Builtins.ts'
-import { Registries } from '../core/Registries.ts'
+import { SpellImmunityModifier } from '../modifier/SpellImmunityModifier.ts'
+import { AttackImmunityModifier } from '../modifier/AttackImmunityModifier.ts'
+import { DebuffImmunityModifier } from '../modifier/DebuffImmunityModifier.ts'
+import { StunModifier } from '../modifier/StunModifier.ts'
+import { Modifier } from '../modifier/Modifier.ts'
+import { Builtins } from '../../core/Builtins.ts'
+import { Registries } from '../../core/Registries.ts'
 
 /**
  * Builtin modifiers.

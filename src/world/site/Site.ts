@@ -1,12 +1,12 @@
 import { InstantiableModel } from '../util/InstantiableModel.ts'
 import { ModelInstance } from '../util/ModelInstance.ts'
-import { Unit, UnitInstance } from '../unit/Unit.ts'
+import { UnitModel, Unit } from '../unit/Unit.ts'
 import { MobType } from '../content/MobType.ts'
 import { LevelRange } from '../util/LevelRange.ts'
 
 export interface MobMode {
     // The unit
-    readonly unit: Unit,
+    readonly unit: UnitModel,
 
     // The type of this mob
     readonly mob: MobType,
@@ -26,22 +26,22 @@ export interface SiteProperties {
     mobModeList: MobMode[]
 }
 
-export class Site extends InstantiableModel<SiteProperties> {
-    public override spawnInstance(): SiteInstance {
-        return new SiteInstance(this)
+export class SiteModel extends InstantiableModel<SiteProperties> {
+    public override createInstance(): Site {
+        return new Site(this)
     }
 }
 
-export class SiteInstance extends ModelInstance<Site> {
+export class Site extends ModelInstance<SiteModel, SiteProperties> {
     /**
      * Creates a mob group.
      */
-    public createMobGroup(): UnitInstance[] {
+    public createMobGroup(): Unit[] {
         const { mobModeList } = this.model.getProperties()
-        const mobList: UnitInstance[] = []
+        const mobList: Unit[] = []
 
         const { unit, levelRange } = mobModeList[0]
-        mobList.push(unit.spawnInstance({
+        mobList.push(unit.createInstance({
             level: levelRange.getRandomLevel(),
         }))
 

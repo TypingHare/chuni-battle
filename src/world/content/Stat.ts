@@ -94,6 +94,10 @@ export class StatsUtil {
         [Race.Colossus]: Stat.Stamina,
     }
 
+    public static isBasic(stat: Stat): boolean {
+        return !this.isAttribute(stat)
+    }
+
     public static isAttribute(stat: Stat): boolean {
         return stat >= Stat.Wisdom && stat <= Stat.CounterSpell
     }

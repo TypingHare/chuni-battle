@@ -1,10 +1,7 @@
 import { BattleUnit } from './BattleUnit.ts'
 import { TargetRangeType, TargetType } from '../../world/ability/Ability.ts'
-
-export enum BattlefieldFaction {
-    Own,
-    Enemy,
-}
+import { BattlefieldPosition } from './BattlefieldPosition.ts'
+import { Faction, FactionUtil } from './Faction.ts'
 
 export type BattleUnitOrNull = BattleUnit | null
 
@@ -12,16 +9,6 @@ export type BattleUnitOrNull = BattleUnit | null
  * Battlefield.
  */
 export class Battlefield {
-    /**
-     * The width of battlefield of each faction.
-     */
-    public static readonly WIDTH: number = 5
-
-    /**
-     * The index of the hero.
-     */
-    public static readonly HERO_INDEX: number = Battlefield.WIDTH / 2
-
     /**
      * Creates a battlefield.
      * @param ownFaction The units in the own faction
@@ -34,62 +21,77 @@ export class Battlefield {
     }
 
     /**
+     * Returns a battle unit.
+     * @param position
+     */
+    public getBattleUnit(position: BattlefieldPosition): BattleUnitOrNull {
+        return position.getFaction() === Faction.Own ?
+            this.ownFaction[position.getIndex()] :
+            this.enemyFaction[position.getIndex()]
+    }
+
+    /**
      * Returns the list of targets.
-     * @param selfFaction
-     * @param centerTargetFaction
-     * @param centerTargetIndex
+     * @param selfPosition
+     * @param centerPosition
      * @param targetType
      * @param targetRangeType
      */
     public getTargetList(
-        selfFaction: BattlefieldFaction,
-        centerTargetFaction: BattlefieldFaction,
-        centerTargetIndex: number,
+        selfPosition: BattlefieldPosition,
+        centerPosition: BattlefieldPosition,
         targetType: TargetType,
         targetRangeType: TargetRangeType,
     ): BattleUnit[] {
         const battleUnitList: BattleUnit[] = []
 
-        console.log(selfFaction)
-
+        const selfFaction = selfPosition.getFaction()
+        const selfIndex = selfPosition.getIndex()
+        const centerFaction = centerPosition.getFaction()
+        const centerIndex = centerPosition.getIndex()
         if (targetRangeType === TargetRangeType.Single) {
-            this.pushIfNotEmpty(battleUnitList, this.getFactionReference(centerTargetFaction), centerTargetIndex)
+            const battleUnit = this.getBattleUnit(centerPosition)
+            if (battleUnit) battleUnitList.push(battleUnit)
         } else if (targetRangeType === TargetRangeType.Medium) {
-            if (centerTargetFaction === BattlefieldFaction.Own) {
-                if (targetType & TargetType.Self) {
-                    if (centerTargetIndex >= Battlefield.HERO_INDEX - 1 && centerTargetIndex <= Battlefield.HERO_INDEX + 1) {
-                        this.pushIfNotEmpty(battleUnitList, this.ownFaction, Battlefield.HERO_INDEX)
-                    }
-                }
-
-                if (targetType & TargetType.Ally) {
-                    for (let i = centerTargetIndex - 1; i <= centerTargetIndex + 1; i++) {
-                        if (i === Battlefield.HERO_INDEX) continue
-                        this.pushIfNotEmpty(battleUnitList, this.ownFaction, i)
+            if (centerFaction === FactionUtil.enemyOf(selfFaction)) {
+                // The target faction is the opposite of self faction
+                if (targetType & TargetType.Enemy) {
+                    for (let i = Math.max(0, centerIndex - 1); i <= Math.min(centerIndex + 1, BattlefieldPosition.WIDTH); i++) {
+                        this.pushIfNotEmpty(battleUnitList, centerFaction, i)
                     }
                 }
             } else {
-                if (targetType & TargetType.Enemy) {
-                    for (let i = centerTargetIndex - 1; i <= centerTargetIndex + 1; i++) {
-                        this.pushIfNotEmpty(battleUnitList, this.enemyFaction, i)
+                // The target faction is the self faction
+                if (targetType & TargetType.Ally) {
+                    for (let i = Math.max(0, centerIndex - 1); i <= Math.min(centerIndex + 1, BattlefieldPosition.WIDTH); i++) {
+                        if (i === selfIndex) continue
+                        this.pushIfNotEmpty(battleUnitList, centerFaction, i)
+                    }
+                }
+
+                // Check self
+                if (targetType & TargetType.Self) {
+                    if (centerIndex >= selfIndex - 1 && centerIndex <= selfIndex + 1) {
+                        this.pushIfNotEmpty(battleUnitList, centerFaction, selfIndex)
                     }
                 }
             }
         } else if (targetRangeType === TargetRangeType.All) {
             if (targetType & TargetType.Self) {
-                this.pushIfNotEmpty(battleUnitList, this.ownFaction, 2)
+                this.pushIfNotEmpty(battleUnitList, selfFaction, selfIndex)
             }
 
             if (targetType & TargetType.Ally) {
-                for (let i = 0; i < Battlefield.WIDTH; i++) {
-                    if (i === Battlefield.HERO_INDEX) continue
-                    this.pushIfNotEmpty(battleUnitList, this.ownFaction, i)
+                for (let i = 0; i < BattlefieldPosition.WIDTH; i++) {
+                    if (i === selfIndex) continue
+                    this.pushIfNotEmpty(battleUnitList, selfFaction, i)
                 }
             }
 
+            const enemyFaction = FactionUtil.enemyOf(selfFaction)
             if (targetType & TargetType.Enemy) {
-                for (let i = 0; i < Battlefield.WIDTH; i++) {
-                    this.pushIfNotEmpty(battleUnitList, this.enemyFaction, i)
+                for (let i = 0; i < BattlefieldPosition.WIDTH; i++) {
+                    this.pushIfNotEmpty(battleUnitList, enemyFaction, i)
                 }
             }
         }
@@ -97,12 +99,12 @@ export class Battlefield {
         return battleUnitList
     }
 
-    private getFactionReference(centerTargetFaction: BattlefieldFaction): BattleUnitOrNull[] {
-        return centerTargetFaction === BattlefieldFaction.Own ? this.ownFaction : this.enemyFaction
+    private getFactionReference(faction: Faction): BattleUnitOrNull[] {
+        return faction === Faction.Own ? this.ownFaction : this.enemyFaction
     }
 
-    private pushIfNotEmpty(battleUnitList: BattleUnit[], faction: BattleUnitOrNull[], index: number): void {
-        const battleUnit = faction[index]
+    private pushIfNotEmpty(battleUnitList: BattleUnit[], faction: Faction, index: number): void {
+        const battleUnit = this.getFactionReference(faction)[index]
         if (battleUnit != null) {
             battleUnitList.push(battleUnit)
         }

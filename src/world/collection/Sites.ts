@@ -1,7 +1,7 @@
-import { Registries } from '../core/Registries.ts'
-import { Builtins } from '../core/Builtins.ts'
-import { Site } from './site/Site.ts'
-import { DarkForestSite } from './site/DarkForestSite.ts'
+import { Registries } from '../../core/Registries.ts'
+import { Builtins } from '../../core/Builtins.ts'
+import { Site } from '../site/Site.ts'
+import { DarkForestSite } from '../site/DarkForestSite.ts'
 
 
 /**

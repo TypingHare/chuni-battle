@@ -1,7 +1,7 @@
-import { DisposableEffect } from './DisposableEffect.ts'
+import { DisposableEffectModel } from './DisposableEffect.ts'
 
-export abstract class HealthPointEffect extends DisposableEffect<HealthPointEffectAffected> {
-    protected constructor(private increaseBy: number) {
+export class HealthPointEffectModel extends DisposableEffectModel<HealthPointEffectAffected> {
+    public constructor(private increaseBy: number) {
         super()
     }
 
@@ -12,16 +12,4 @@ export abstract class HealthPointEffect extends DisposableEffect<HealthPointEffe
 
 export interface HealthPointEffectAffected {
     increaseHealthPoint(increaseBy: number): void
-}
-
-export class HealEffect extends HealthPointEffect {
-    public constructor(heal: number) {
-        super(heal)
-    }
-}
-
-export class DamageEffect extends HealthPointEffect {
-    public constructor(damage: number) {
-        super(damage)
-    }
 }

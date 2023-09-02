@@ -1,5 +1,5 @@
 import { Site } from './Site.ts'
-import { Units } from '../Units.ts'
+import { Units } from '../collection/Units.ts'
 import { LevelRange } from '../util/LevelRange.ts'
 import { MobType } from '../content/MobType.ts'
 

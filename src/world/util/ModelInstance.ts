@@ -1,11 +1,17 @@
+import { InstantiableModel } from './InstantiableModel.ts'
+
 /**
- * Model instance abstract class.
+ * Model instance.
  */
-export abstract class ModelInstance<M, S extends object = {}> {
+export abstract class ModelInstance<
+    M extends InstantiableModel<P, S>,
+    P extends object,
+    S extends object = {}
+> {
     /**
      * Creates a model instance.
      * @param model The model
-     * @param options The spawning options
+     * @param options The instantiating options
      */
     public constructor(protected model: M, protected options?: S) {
     }
@@ -15,12 +21,5 @@ export abstract class ModelInstance<M, S extends object = {}> {
      */
     public getModel(): M {
         return this.model
-    }
-
-    /**
-     * Returns the spawning options.
-     */
-    public getOptions(): S | undefined {
-        return this.options
     }
 }

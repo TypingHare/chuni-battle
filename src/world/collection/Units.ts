@@ -1,8 +1,8 @@
-import { Registries } from '../core/Registries.ts'
-import { Builtins } from '../core/Builtins.ts'
+import { Registries } from '../../core/Registries.ts'
+import { Builtins } from '../../core/Builtins.ts'
 import { Abilities } from './Abilities.ts'
-import { Unit } from './unit/Unit.ts'
-import { WarriorUnit } from './unit/WarriorUnit.ts'
+import { UnitModel } from '../unit/Unit.ts'
+import { WarriorUnit } from '../unit/WarriorUnit.ts'
 
 /**
  * Builtin units.
@@ -22,7 +22,7 @@ export class Units {
      * @param unit The unit to register
      * @private
      */
-    private static register(path: string, unit: Unit): Unit {
+    private static register(path: string, unit: UnitModel): UnitModel {
         return Registries.UNIT.register(Builtins.RESOURCE_LOCATION_BUILDER.create(path), unit)
     }
 }

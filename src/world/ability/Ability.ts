@@ -1,9 +1,9 @@
 import { InstantiableModel } from '../util/InstantiableModel.ts'
 import { ModelInstance } from '../util/ModelInstance.ts'
-import { Effect, EffectInstance } from '../effect/Effect.ts'
-import { HealthPointEffectAffected } from '../effect/HealEffect.ts'
-import { ManaPointEffectAffected } from '../effect/ManaPointEffect.ts'
+import { Effect, EffectModel } from '../effect/Effect.ts'
+import { ManaPointEffectAffected } from '../effect/MagicPointEffect.ts'
 import { ModifierAffected } from '../effect/ModifierEffect.ts'
+import { HealthPointEffectAffected } from '../effect/HealthPointEffect.ts'
 
 /**
  * The targeting type enumeration for abilities.
@@ -42,39 +42,39 @@ export interface AbilityProperties {
     readonly isSpell: boolean
 
     // Lists of effects of each level
-    readonly effectList: Effect[][]
+    readonly effectList: EffectModel[][]
 }
 
-export interface AbilitySpawningOptions {
+export interface AbilityOptions {
     readonly level: number
 }
 
 export type AbilityBearer = HealthPointEffectAffected | ManaPointEffectAffected | ModifierAffected
 
-export class Ability extends InstantiableModel<AbilityProperties, AbilitySpawningOptions> {
+export class AbilityModel extends InstantiableModel<AbilityProperties, AbilityOptions> {
     /**
      * Applies this ability to certain bearers
      * @param bearerList
-     * @param abilityInstance
+     * @param ability
      */
-    public apply(bearerList: AbilityBearer[], abilityInstance: AbilityInstance): void {
-        const effectInstanceList = abilityInstance.getEffectInstanceList()
+    public apply(bearerList: AbilityBearer[], ability: Ability): void {
+        const effectList = ability.getEffectList()
         for (const abilityBearer of bearerList) {
-            for (const effectInstance of effectInstanceList) {
-                effectInstance.getModel().apply(abilityBearer, effectInstance)
+            for (const effect of effectList) {
+                effect.getModel().apply(abilityBearer, effect)
             }
         }
     }
 
-    public override spawnInstance(options: AbilitySpawningOptions): AbilityInstance {
-        return new AbilityInstance(this, options)
+    public override createInstance(options: AbilityOptions): Ability {
+        return new Ability(this, options)
     }
 }
 
 /**
  * A special ability which represents null.
  */
-export class EmptyAbility extends Ability {
+export class EmptyAbility extends AbilityModel {
     /**
      * The name of the empty ability.
      */
@@ -94,23 +94,23 @@ export class EmptyAbility extends Ability {
     }
 }
 
-export class AbilityInstance extends ModelInstance<Ability, AbilitySpawningOptions> {
+export class Ability extends ModelInstance<AbilityModel, AbilityProperties, AbilityOptions> {
     /**
-     * A special ability instance which represents no ability.
+     * A special ability which represents no ability.
      */
-    public static readonly NULL = new AbilityInstance(new EmptyAbility(), { level: 0 })
+    public static readonly NULL = new Ability(new EmptyAbility(), { level: 0 })
 
     /**
-     * The list of effect instances.
+     * The list of effects.
      * @private
      */
-    private effectInstanceList: EffectInstance[] = []
+    private effectList: Effect[] = []
 
-    public constructor(ability: Ability, options: AbilitySpawningOptions) {
+    public constructor(ability: AbilityModel, options: AbilityOptions) {
         super(ability, options)
 
         if (ability.getProperties().name !== EmptyAbility.NAME) {
-            this.loadEffectInstanceList()
+            this.loadEffectList()
             options.level
         }
     }
@@ -119,24 +119,24 @@ export class AbilityInstance extends ModelInstance<Ability, AbilitySpawningOptio
      * Loads effect instances.
      * @private
      */
-    private loadEffectInstanceList(): void {
-        if (this === AbilityInstance.NULL) {
+    private loadEffectList(): void {
+        if (this === Ability.NULL) {
             return
         }
 
         const level = this.options!.level
-        this.effectInstanceList = []
+        this.effectList = []
         const effectList = this.model.getProperties().effectList[level - 1]
         for (const effect of effectList) {
-            this.effectInstanceList.push(effect.spawnInstance())
+            this.effectList.push(effect.createInstance())
         }
     }
 
     /**
-     * Returns the list of effect instances.
+     * Returns the list of effects.
      */
-    public getEffectInstanceList(): EffectInstance[] {
-        return this.effectInstanceList
+    public getEffectList(): Effect[] {
+        return this.effectList
     }
 }
 
@@ -144,7 +144,7 @@ export interface AbilityHolder {
     /**
      * Returns all abilities.
      */
-    getAbilities(): AbilityInstance[]
+    getAbilities(): Ability[]
 
     /**
      * Returns the number of abilities.
@@ -153,13 +153,13 @@ export interface AbilityHolder {
 
     /**
      * Adds an ability.
-     * @param abilityInstance
+     * @param ability The ability to add
      */
-    addAbility(abilityInstance: AbilityInstance): void
+    addAbility(ability: Ability): void
 
     /**
      * Removes an ability.
-     * @param index
+     * @param index The index of the ability to remove
      */
     removeAbility(index: number): void
 

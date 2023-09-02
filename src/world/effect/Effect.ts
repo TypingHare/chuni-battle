@@ -15,7 +15,7 @@ export interface EffectProperties {
 /**
  * @param T The object to apply
  */
-export class Effect<T = any> extends InstantiableModel<EffectProperties> {
+export class EffectModel<T = any> extends InstantiableModel<EffectProperties> {
     /**
      * Permanent duration.
      */
@@ -29,24 +29,24 @@ export class Effect<T = any> extends InstantiableModel<EffectProperties> {
     /**
      * Applies this effect on an object.
      * @param _effectAffected The object to apply
-     * @param _effectInstance The effect instance
+     * @param _effect The effect instance
      */
-    public apply(_effectAffected: T, _effectInstance: EffectInstance<T>) {
+    public apply(_effectAffected: T, _effect: Effect<T>) {
     }
 
     /**
      * This method is fired when the effect is removed from an EffectAffected object.
      * @param _effectAffected The object to apply
-     * @param _effectInstance The effect instance
+     * @param _effect The effect instance
      */
-    public afterRemove(_effectAffected: T, _effectInstance: EffectInstance<T>) {
+    public afterRemove(_effectAffected: T, _effect: Effect<T>) {
     }
 
     /**
      * Whether this effect is a permanent effect.
      */
     public isPermanent(): boolean {
-        return this.properties.duration === Effect.PERMANENT_DURATION
+        return this.properties.duration === EffectModel.PERMANENT_DURATION
     }
 
     /**
@@ -56,31 +56,34 @@ export class Effect<T = any> extends InstantiableModel<EffectProperties> {
         return this.properties.duration === 0
     }
 
-    public override spawnInstance(): EffectInstance<T> {
-        return new EffectInstance<T>(this)
+    public override createInstance(): Effect<T> {
+        return new Effect<T>(this)
     }
 }
 
-export class EffectInstance<T = any> extends ModelInstance<Effect<T>> {
+export class Effect<T = any> extends ModelInstance<EffectModel<T>, EffectProperties> {
 }
 
 /**
  * A game object that can be affected by effects.
  */
 export interface EffectAffected<T> {
-    getEffects(): Iterable<EffectInstance<T>>;
+    /**
+     * Returns all effects.
+     */
+    getEffects(): Iterable<Effect<T>>;
 
     /**
      * Adds an effect.
-     * @param effectInstance
+     * @param effect
      */
-    addEffect(effectInstance: EffectInstance<T>): void
+    addEffect(effect: Effect<T>): void
 
     /**
      * Removes an effect.
-     * @param effectInstance
+     * @param effect
      */
-    removeEffect(effectInstance: EffectInstance<T>): void
+    removeEffect(effect: Effect<T>): void
 
     /**
      * Applies all effects.

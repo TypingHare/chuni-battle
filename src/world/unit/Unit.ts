@@ -1,18 +1,18 @@
 import { InstantiableModel } from '../util/InstantiableModel.ts'
 import { ModelInstance } from '../util/ModelInstance.ts'
 import { Race } from '../content/Race.ts'
-import { Ability, AbilityHolder, AbilityInstance, AbilitySpawningOptions } from '../ability/Ability.ts'
+import { Ability, AbilityHolder, AbilityModel, AbilityOptions } from '../ability/Ability.ts'
 import { StatEffectAffected } from '../effect/StatEffect.ts'
-import { HealthPointEffectAffected } from '../effect/HealEffect.ts'
-import { ManaPointEffectAffected } from '../effect/ManaPointEffect.ts'
+import { ManaPointEffectAffected } from '../effect/MagicPointEffect.ts'
 import { ModifierAffected } from '../effect/ModifierEffect.ts'
-import { EffectInstance } from '../effect/Effect.ts'
 import { Modifier } from '../modifier/Modifier.ts'
 import { HiddenAttribute, Stat, StatsUtil, VisibleAttribute } from '../content/Stat.ts'
 import { GameConstants } from '../GameConstants.ts'
+import { HealthPointEffectAffected } from '../effect/HealthPointEffect.ts'
+import { Effect } from '../effect/Effect.ts'
 
-export type AbilityMode = AbilitySpawningOptions & {
-    readonly ability: Ability
+export type AbilityMode = AbilityOptions & {
+    readonly ability: AbilityModel
 }
 
 export interface UnitProperties {
@@ -32,13 +32,13 @@ export interface UnitProperties {
     readonly abilityModeList: AbilityMode[]
 }
 
-export interface UnitSpawningOptions {
+export interface UnitOptions {
     readonly level: number
 }
 
-export class Unit extends InstantiableModel<UnitProperties, UnitSpawningOptions> {
-    public override spawnInstance(options: UnitSpawningOptions): UnitInstance {
-        return new UnitInstance(this, options)
+export class UnitModel extends InstantiableModel<UnitProperties, UnitOptions> {
+    public override createInstance(options: UnitOptions): Unit {
+        return new Unit(this, options)
     }
 
     public getStatBase(stat: Stat): number {
@@ -50,13 +50,13 @@ export class Unit extends InstantiableModel<UnitProperties, UnitSpawningOptions>
     }
 }
 
-export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> implements StatEffectAffected,
+export class Unit extends ModelInstance<UnitModel, UnitProperties, UnitOptions> implements StatEffectAffected,
     HealthPointEffectAffected,
     ManaPointEffectAffected,
     ModifierAffected,
     AbilityHolder {
     /**
-     * The level of the unit instance.
+     * The level of the unit.
      * @private
      */
     private level: number
@@ -74,10 +74,10 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
     private readonly extraStats: number[]
 
     /**
-     * A set of effect instances.
+     * A set of effects.
      * @private
      */
-    private readonly effectInstanceSet: Set<EffectInstance> = new Set()
+    private readonly effectSet: Set<Effect> = new Set()
 
     /**
      * The unit's current health point.
@@ -92,10 +92,10 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
     private currentManaPoint: number
 
     /**
-     * The list of ability instances.
+     * The list of abilities.
      * @private
      */
-    private readonly abilityInstanceList: AbilityInstance[]
+    private readonly abilityList: Ability[]
 
     /**
      * A set of modifiers.
@@ -104,15 +104,15 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
     private readonly modifierSet: Set<Modifier> = new Set()
 
     /**
-     * Creates a unit instance.
-     * @param unit
+     * Creates a units.
+     * @param unitModel
      * @param options
      */
     public constructor(
-        unit: Unit,
-        options: UnitSpawningOptions,
+        unitModel: UnitModel,
+        options: UnitOptions,
     ) {
-        super(unit, options)
+        super(unitModel, options)
 
         // Level
         this.level = options.level
@@ -129,15 +129,12 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
         this.currentHealthPoint = this.getStatValue(Stat.HealthPoint)
         this.currentManaPoint = this.getStatValue(Stat.ManaPoint)
 
-        // Initialize ability instances
-        this.abilityInstanceList = []
-        for (let i = 0; i < GameConstants.UNIT_MAX_ABILITY_NUMBER; i++) {
-            this.abilityInstanceList.push(AbilityInstance.NULL)
-        }
+        // Initialize abilities
+        this.abilityList = []
     }
 
     /**
-     * Returns the unit of this unit instance.
+     * Returns the unit of this unit.
      */
     public getLevel(): number {
         return this.level
@@ -158,7 +155,7 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
     }
 
     /**
-     * Make this unit instance level up.
+     * Make this unit level up.
      */
     public levelUp(): void {
         if (this.level === GameConstants.UNIT_MAX_LEVEL) {
@@ -167,7 +164,7 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
 
         this.level++
 
-        // The unit instance gains stats
+        // The unit gains stats
         for (let stat = Stat.HealthPoint; stat < Stat.CounterSpell; stat++) {
             this.baseStats[stat] += this.model.getStatGain(stat)
         }
@@ -177,7 +174,7 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
      * Attacks a specified target.
      * @param target The target to attack
      */
-    public attack(target: UnitInstance): void {
+    public attack(target: Unit): void {
         target.increaseHealthPoint(-10)
     }
 
@@ -238,51 +235,42 @@ export class UnitInstance extends ModelInstance<Unit, UnitSpawningOptions> imple
         this.extraStats[stat] += Math.max(0, this.extraStats[stat] += increaseBy)
     }
 
-    public getEffects(): Iterable<EffectInstance> {
-        return this.effectInstanceSet
+    public getEffects(): Iterable<Effect> {
+        return this.effectSet
     }
 
-    public addEffect(effectInstance: EffectInstance): void {
-        this.effectInstanceSet.add(effectInstance)
+    public addEffect(effect: Effect): void {
+        this.effectSet.add(effect)
     }
 
     public applyEffects(): void {
-        for (const effectInstance of this.effectInstanceSet) {
-            effectInstance.getModel().apply(this, effectInstance)
+        for (const effect of this.effectSet) {
+            effect.getModel().apply(this, effect)
         }
     }
 
-    public removeEffect(effectInstance: EffectInstance): void {
-        this.effectInstanceSet.delete(effectInstance)
+    public removeEffect(effect: Effect): void {
+        this.effectSet.delete(effect)
     }
 
-    public getAbilities(): AbilityInstance[] {
-        return this.abilityInstanceList
+    public getAbilities(): Ability[] {
+        return this.abilityList
     }
 
     public getAbilityNumber(): number {
-        for (let i = 0; i < GameConstants.UNIT_MAX_ABILITY_NUMBER; i++) {
-            if (this.abilityInstanceList[i] === AbilityInstance.NULL) {
-                return i
-            }
-        }
-
-        return GameConstants.UNIT_MAX_ABILITY_NUMBER
+        return this.abilityList.filter(ability => ability !== Ability.NULL).length
     }
 
-    public addAbility(abilityInstance: AbilityInstance): void {
-        const abilityNumber = this.getAbilityNumber()
-        if (abilityNumber < GameConstants.UNIT_MAX_ABILITY_NUMBER) {
-            this.abilityInstanceList[abilityNumber] = abilityInstance
-        }
+    public addAbility(ability: Ability): void {
+        this.abilityList.push(ability)
     }
 
     public removeAbility(index: number): void {
-        this.abilityInstanceList[index] = AbilityInstance.NULL
+        this.abilityList[index] = Ability.NULL
     }
 
     public swapAbility(index1: number, index2: number): void {
-        const list = this.abilityInstanceList;
+        const list = this.abilityList;
         [list[index1], list[index2]] = [list[index2], list[index1]]
     }
 

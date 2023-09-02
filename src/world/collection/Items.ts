@@ -1,8 +1,8 @@
-import { Registries } from '../core/Registries.ts'
-import { Builtins } from '../core/Builtins.ts'
-import { Item } from './item/Item.ts'
-import { SapphireItem } from './item/gem/SapphireItem.ts'
-import { DiamondItem } from './item/gem/DiamondItem.ts'
+import { Registries } from '../../core/Registries.ts'
+import { Builtins } from '../../core/Builtins.ts'
+import { ItemModel } from '../item/Item.ts'
+import { SapphireItem } from '../item/gem/SapphireItem.ts'
+import { DiamondItem } from '../item/gem/DiamondItem.ts'
 
 /**
  * Builtin items.
@@ -18,7 +18,7 @@ export class Items {
      * @param item The item to register
      * @private
      */
-    private static register(path: string, item: Item): Item {
+    private static register(path: string, item: ItemModel): ItemModel {
         return Registries.ITEM.register(Builtins.RESOURCE_LOCATION_BUILDER.create(path), item)
     }
 }

@@ -1,4 +1,4 @@
-import { Unit, UnitProperties } from './Unit.ts'
+import { UnitModel, UnitProperties } from './Unit.ts'
 import { Stat } from '../content/Stat.ts'
 
 export type StatsObject = {
@@ -10,7 +10,7 @@ export type DefaultUnitProperties = Omit<UnitProperties, 'statsBase' | 'statsGai
 /**
  * Default unit.
  */
-export class DefaultUnit extends Unit {
+export class DefaultUnit extends UnitModel {
     public static readonly HEALTH_POINT_BASE: number = 50
     public static readonly MANA_POINT_BASE: number = 20
     public static readonly HEALTH_REGENERATION_BASE: number = 0.1

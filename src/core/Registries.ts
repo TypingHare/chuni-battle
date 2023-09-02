@@ -3,11 +3,11 @@ import { Registry } from './registry/Registry.ts'
 import { BuiltinRegistry } from './registry/BuiltinRegistry.ts'
 import { ResourceKey } from './resource/ResourceKey.ts'
 import { Modifier } from '../world/modifier/Modifier.ts'
-import { Ability } from '../world/ability/Ability.ts'
-import { Effect } from '../world/effect/Effect.ts'
-import { Item } from '../world/item/Item.ts'
+import { AbilityModel } from '../world/ability/Ability.ts'
+import { EffectModel } from '../world/effect/Effect.ts'
+import { ItemModel } from '../world/item/Item.ts'
 import { Site } from '../world/site/Site.ts'
-import { Unit } from '../world/unit/Unit.ts'
+import { UnitModel } from '../world/unit/Unit.ts'
 
 /**
  * A utility class collecting all builtin registries.
@@ -18,12 +18,12 @@ export class Registries {
         = new BuiltinRegistry<Registry>(Registries.createRegistryKey(Builtins.ROOT_LOCATION_PATH))
 
     // Regular registries
-    public static readonly ABILITY: Registry<Ability> = Registries.createRegistry('ability')
-    public static readonly EFFECT: Registry<Effect> = Registries.createRegistry('effect')
-    public static readonly ITEM: Registry<Item> = Registries.createRegistry('item')
+    public static readonly ABILITY: Registry<AbilityModel> = Registries.createRegistry('ability')
+    public static readonly EFFECT: Registry<EffectModel> = Registries.createRegistry('effect')
+    public static readonly ITEM: Registry<ItemModel> = Registries.createRegistry('item')
     public static readonly MODIFIER: Registry<Modifier> = Registries.createRegistry('modifier')
     public static readonly SITE: Registry<Site> = Registries.createRegistry('site')
-    public static readonly UNIT: Registry<Unit> = Registries.createRegistry('unit')
+    public static readonly UNIT: Registry<UnitModel> = Registries.createRegistry('unit')
 
     /**
      * Creates a registry key.

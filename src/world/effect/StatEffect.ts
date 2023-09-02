@@ -1,4 +1,4 @@
-import { Effect, EffectAffected, EffectInstance, EffectProperties } from './Effect.ts'
+import { Effect, EffectAffected, EffectModel, EffectProperties } from './Effect.ts'
 import { Stat } from '../content/Stat.ts'
 
 /**
@@ -21,12 +21,12 @@ export interface StatEffectProperties extends EffectProperties {
 /**
  * An effect that affects a unit.
  */
-export class StatEffect extends Effect<StatEffectAffected> {
+export class StatEffectModel extends EffectModel<StatEffectAffected> {
     public constructor(protected properties: StatEffectProperties) {
         super(properties)
     }
 
-    public override apply(statEffectAffected: StatEffectAffected, _effectInstance: StatEffectInstance): void {
+    public override apply(statEffectAffected: StatEffectAffected, _effect: StatEffect): void {
         const { affectedStat, value, isPercentage } = this.properties
 
         const realValue: number = Math.floor(!isPercentage ? value : (() => {
@@ -42,18 +42,18 @@ export class StatEffect extends Effect<StatEffectAffected> {
         statEffectAffected.increaseExtraStatValue(affectedStat, realValue)
     }
 
-    public override afterRemove(effectAffected: StatEffectAffected, effectInstance: StatEffectInstance): void {
+    public override afterRemove(effectAffected: StatEffectAffected, effect: StatEffect): void {
         if (!this.properties.toReturn) {
             return
         }
 
         const { affectedStat } = this.properties
-        const accumulatedValue: number = effectInstance.getAccumulatedValue()
+        const accumulatedValue: number = effect.getAccumulatedValue()
         effectAffected.increaseExtraStatValue(affectedStat, -accumulatedValue)
     }
 
-    public override spawnInstance(): StatEffectInstance {
-        return new StatEffectInstance(this)
+    public override createInstance(): StatEffect {
+        return new StatEffect(this)
     }
 }
 
@@ -81,7 +81,7 @@ export interface StatEffectAffected extends EffectAffected<StatEffectAffected> {
 /**
  * Unit effect instance.
  */
-export class StatEffectInstance extends EffectInstance<StatEffectAffected> {
+export class StatEffect extends Effect<StatEffectAffected> {
     /**
      * Accumulated value.
      * @private
@@ -90,10 +90,10 @@ export class StatEffectInstance extends EffectInstance<StatEffectAffected> {
 
     /**
      * Creates a stat effect instance.
-     * @param effect
+     * @param statEffectModel
      */
-    public constructor(protected effect: StatEffect) {
-        super(effect)
+    public constructor(protected statEffectModel: StatEffectModel) {
+        super(statEffectModel)
     }
 
     /**

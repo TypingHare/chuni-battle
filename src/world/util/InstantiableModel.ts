@@ -4,9 +4,13 @@ import { ModelInstance } from './ModelInstance.ts'
 /**
  * Instantiable model abstract class.
  */
-export abstract class InstantiableModel<T extends object, S extends object = {}> extends Model<T> {
+export abstract class InstantiableModel<
+    P extends object,
+    S extends object = {}
+> extends Model<P> {
     /**
-     * Spawns an instance.
+     * Creates a model instance.
+     * @param options The instantiating options for creating an instance
      */
-    public abstract spawnInstance(options?: S): ModelInstance<InstantiableModel<T, S>>
+    public abstract createInstance(options?: S): ModelInstance<InstantiableModel<P, S>, P, S>
 }

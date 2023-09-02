@@ -19,5 +19,6 @@ export class Builtins {
     /**
      * Root location.
      */
-    public static readonly ROOT_LOCATION: ResourceLocation = Builtins.RESOURCE_LOCATION_BUILDER.create(Builtins.ROOT_LOCATION_PATH)
+    public static readonly ROOT_LOCATION: ResourceLocation
+        = Builtins.RESOURCE_LOCATION_BUILDER.create(Builtins.ROOT_LOCATION_PATH)
 }

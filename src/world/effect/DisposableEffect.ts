@@ -1,9 +1,9 @@
-import { Effect } from './Effect.ts'
+import { EffectModel } from './Effect.ts'
 
 /**
  * Disposable effect.
  */
-export abstract class DisposableEffect<T = any> extends Effect<T> {
+export abstract class DisposableEffectModel<T = any> extends EffectModel<T> {
     /**
      * Creates a disposable effect.
      * @protected
@@ -12,7 +12,7 @@ export abstract class DisposableEffect<T = any> extends Effect<T> {
         super({
             instantlyApplied: true,
             duration: 0,
-            interval: Effect.APPLY_ONCE_INTERVAL,
+            interval: EffectModel.APPLY_ONCE_INTERVAL,
         })
     }
 }

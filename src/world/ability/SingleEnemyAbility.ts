@@ -1,9 +1,9 @@
-import { Ability, AbilityProperties, TargetRangeType, TargetType } from './Ability.ts'
+import { AbilityModel, AbilityProperties, TargetRangeType, TargetType } from './Ability.ts'
 
 /**
  * An ability that targets one enemy.
  */
-export class SingleEnemyAbility extends Ability {
+export class SingleEnemyAbilityModel extends AbilityModel {
     public constructor(properties: Omit<AbilityProperties, 'targetType' | 'targetRange'>) {
         super({
             ...properties,

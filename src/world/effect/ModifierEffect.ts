@@ -1,4 +1,4 @@
-import { Effect, EffectAffected, EffectProperties } from './Effect.ts'
+import { EffectAffected, EffectModel, EffectProperties } from './Effect.ts'
 import { Modifier } from '../modifier/Modifier.ts'
 
 export type ModifierEffectProperties = Omit<EffectProperties, 'instantlyApplied' | 'interval'> & {
@@ -8,7 +8,7 @@ export type ModifierEffectProperties = Omit<EffectProperties, 'instantlyApplied'
 /**
  * Modifier effect.
  */
-export class ModifierEffect extends Effect<ModifierAffected> {
+export class ModifierEffectModel extends EffectModel<ModifierAffected> {
     /**
      * Modifier to add to the affected object.
      * @private
@@ -23,7 +23,7 @@ export class ModifierEffect extends Effect<ModifierAffected> {
         super({
             instantlyApplied: true,
             duration: properties.duration,
-            interval: Effect.APPLY_ONCE_INTERVAL,
+            interval: EffectModel.APPLY_ONCE_INTERVAL,
         })
 
         const { modifier } = properties
@@ -45,12 +45,12 @@ export class ModifierEffect extends Effect<ModifierAffected> {
         }
     }
 
-    public override afterRemove(effectAffected: ModifierAffected) {
-        const effectInstances = effectAffected.getEffects()
+    public override afterRemove(effectAffected: ModifierAffected): void {
+        const effects = effectAffected.getEffects()
 
         let hasSameModifierEffect = false
-        for (const effectInstance of effectInstances) {
-            const effect = effectInstance.getModel() as Effect<unknown>
+        for (const effect of effects) {
+            const effect = effect.getModel() as EffectModel<unknown>
             if (effect instanceof Object.getPrototypeOf(this)) {
                 hasSameModifierEffect = true
                 break
